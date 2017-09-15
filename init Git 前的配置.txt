@@ -1,0 +1,14 @@
+设置用户信息
+git config --global user.name "donghui"
+git config --global user.email "huid@sina.cn"
+
+信息保存在用户目录的.gitconfig中
+
+查看配置信息
+git config --list
+或git config user.name等
+
+git中不同的配置文件
+/etc/gitconfig
+~/.gitconfig
+.git/config
