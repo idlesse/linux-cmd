@@ -1,0 +1,32 @@
+首先，我们应该清楚TF/SD卡可以看作一张完全空白的“白纸”，之所以有分区、分区格式的区别不过是在在这张“白纸”的某些特定位置写入了一些数据来指示分区、分区格式。
+ 
+其次，我们还应该清楚，在TF/SD启动模式下，exynos 4412一上电，内部iROM会从TF/SD的第1个Block（第512个字节开始）读取8KB的数据到内部iRAM，然后从内部iRAM的0地址开始运行。
+ 
+原理搞清楚了，那么首先需要把TF/SD低级格式化－所有Block全部写0x00。
+
+我们使用linux自带命令hexdump查看tf／sd卡中的数据：
+命令为：
+sudo hexdump -n 1048576 /dev/sdb
+
+其中-n 1048576代表打印出前1M＝1024*1024=1048576字节的数据。
+
+3、清空TF卡上前1MB的数据
+由于4412的uboot大小基本在几百kB的量级，所以清空前1MB空间足够用，注意这里的清空不是格式化，而是填充0x00。
+
+我们利用系统/dev下的zero设备，清零tf／sd卡前1MB。
+
+执行结果如下：
+
+sudo dd if=/dev/zero of=/dev/sdb count=2000
+
+这里的count＝2000代表清空2000个block，一个block＝512B，2000个正好为1MB。
+
+ 
+
+再次hexdump查看tf／sd卡数据，发现：
+
+sudo hexdump -n 1048576 /dev/sdb
+
+前1MB空间成功清0x00。
+
+sudo hexdump -n 64 -C -s 16 usb.txt.md5
